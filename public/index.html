@@ -19,6 +19,13 @@
     --font-body:'Manrope', 'Segoe UI', Arial, sans-serif;
     --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
     --noise: url('/noise.svg');
+    /* CrazyGames (and other portal embeds) overlay a toolbar on top of the
+       bottom of the iframe without shrinking the iframe itself, so 100vh
+       still measures space that isn't actually visible/clickable. Every
+       viewport-filling container reserves this strip instead of touching
+       the true bottom edge. */
+    --safe-bottom: 80px;
+    --safe-vh: calc(100vh - var(--safe-bottom));
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);height:100%;
@@ -28,12 +35,12 @@
     transition:transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease, background 0.15s ease;}
   button:hover{filter:brightness(1.09);}
   button:active{transform:translateY(1px);}
-  #app{position:fixed;inset:0;overflow:auto;}
+  #app{position:fixed;top:0;left:0;right:0;bottom:var(--safe-bottom);overflow:auto;}
   .icon{width:1em;height:1em;display:inline-block;vertical-align:-0.15em;flex-shrink:0;}
   .icon-row{display:inline-flex;align-items:center;gap:6px;}
 
   /* ---------- START / LOBBY SCREEN ---------- */
-  #start-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  #start-screen{position:fixed;top:0;left:0;right:0;bottom:var(--safe-bottom);display:flex;align-items:center;justify-content:center;
     background:radial-gradient(circle at 50% 15%, #2d2148 0%, #0e0a16 72%); z-index:50; padding:16px; overflow-y:auto;}
   .start-card{position:relative;max-width:520px;width:100%;
     background-image: var(--noise), linear-gradient(160deg, var(--panel), var(--panel2) 130%);
@@ -112,7 +119,7 @@
   #spectator-banner .icon{margin-right:5px;}
 
   /* ---------- GAME SCREEN ---------- */
-  #game-screen{display:none;position:fixed;inset:0;flex-direction:column;}
+  #game-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:var(--safe-bottom);flex-direction:column;}
   #topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
     background:linear-gradient(180deg,var(--panel),#181228);
     border-bottom:1px solid var(--border);flex-shrink:0;
@@ -136,7 +143,8 @@
       inset 0 0 60px rgba(139,111,214,0.08), inset 0 0 40px rgba(255,145,82,0.04);}
   #board{display:grid;grid-template-columns:1.55fr repeat(9,1fr) 1.55fr;
     grid-template-rows:1.55fr repeat(9,1fr) 1.55fr;
-    width:min(90vh,82vw,980px);height:min(90vh,82vw,980px);background:#0a0612;gap:6px;
+    width:min(calc(var(--safe-vh) * 0.9),82vw,980px);height:min(calc(var(--safe-vh) * 0.9),82vw,980px);
+    background:#0a0612;gap:6px;
     position:relative;}
   .tile{position:relative;
     background-image: var(--noise), linear-gradient(165deg,#37305a,#241b3d 65%,#1c1533);
@@ -419,7 +427,7 @@
   body.ghost-turn #topbar h2{color:var(--ghost-accent);}
   body.ghost-turn #action-row button{background:linear-gradient(160deg,#5ff0d8,var(--ghost-accent) 65%);color:#06211c;}
 
-  #modal-backdrop{position:fixed;inset:0;background:rgba(6,4,12,0.75);display:none;align-items:center;
+  #modal-backdrop{position:fixed;top:0;left:0;right:0;bottom:var(--safe-bottom);background:rgba(6,4,12,0.75);display:none;align-items:center;
     justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(2px);}
   #modal-backdrop.show{display:flex;}
   .modal{position:relative;
@@ -475,7 +483,7 @@
   .haunt-tile:hover{border-color:var(--ghost-accent);color:var(--ink);transform:translateY(-1px);}
   .haunt-tile.disabled{opacity:0.3;cursor:default;}
 
-  #reveal-overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;
+  #reveal-overlay{position:fixed;top:0;left:0;right:0;bottom:var(--safe-bottom);z-index:200;display:none;align-items:center;justify-content:center;
     background:radial-gradient(circle,#1a2e2a 0%,#050a08 100%);text-align:center;padding:20px;}
   #reveal-overlay.show{display:flex;animation:revealPulse 1.4s ease infinite;}
   @keyframes revealPulse{0%,100%{background-color:#050a08;}50%{background-color:#0c1f18;}}
@@ -489,7 +497,7 @@
 
   @media (max-width:760px){
     #main-area{flex-direction:column;}
-    #side-panel{width:100%;order:2;max-height:40vh;border-left:none;border-top:1px solid var(--border);}
+    #side-panel{width:100%;order:2;max-height:calc(var(--safe-vh) * 0.4);border-left:none;border-top:1px solid var(--border);}
     .panel-box{padding:10px 11px;}
     #owned-list{max-height:90px;}
     #board-wrap{order:1;}
