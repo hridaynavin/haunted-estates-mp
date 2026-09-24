@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------
 // CONNECTION / SESSION
 // ---------------------------------------------------------------------------
-const socket = io();
+const socket = io('https://haunted-estates.onrender.com');
 let roomCode = null, myToken = null, mySeatId = null, isSpectator = false, hostSeatId = null;
 let latestState = null;
 let tokenEls = {};

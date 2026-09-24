@@ -12,7 +12,19 @@ const ROOM_IDLE_MS = 1000 * 60 * 60 * 6; // reap rooms idle for 6h so memory doe
 const app = express();
 app.use(express.static(path.join(__dirname, '..', 'public')));
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+
+// Explicit CORS allow-list for the socket.io handshake (polling + WS upgrade).
+// - Render URL: this backend's own origin (harmless to include, but the static
+//   public/ site itself is now hosted separately, so it's mostly a safety net).
+// - CrazyGames serves uploaded HTML5 games from a per-game subdomain of
+//   game-files.crazygames.com (e.g. https://cubes-2048-io.game-files.crazygames.com),
+//   not from crazygames.com directly, so the allow-list matches that pattern.
+//   Confirmed against CrazyGames' own docs: https://docs.crazygames.com/resources/html5/sitelock/
+const ALLOWED_ORIGINS = [
+  'https://haunted-estates.onrender.com',
+  /^https:\/\/[a-z0-9-]+\.game-files\.crazygames\.com$/,
+];
+const io = new Server(server, { cors: { origin: ALLOWED_ORIGINS } });
 
 /** @type {Map<string, Room>} */
 const rooms = new Map();
