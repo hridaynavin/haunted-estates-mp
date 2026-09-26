@@ -20,9 +20,16 @@ const server = http.createServer(app);
 //   game-files.crazygames.com (e.g. https://cubes-2048-io.game-files.crazygames.com),
 //   not from crazygames.com directly, so the allow-list matches that pattern.
 //   Confirmed against CrazyGames' own docs: https://docs.crazygames.com/resources/html5/sitelock/
+// - itch.io serves uploaded HTML5 games from a subdomain of itch.zone — currently
+//   html-classic.itch.zone and html.itch.zone (a third, older host,
+//   v6p9d9t4.ssl.hwcdn.net, was retired). itch.io's own guidance is to allow-list
+//   the wildcard *.itch.zone rather than a single hostname, since "any new CDN
+//   configurations we provision will always use a subdomain on itch.zone":
+//   https://itch.io/t/3099694/notice-for-html-game-devs-upcoming-change-to-cdn-domain
 const ALLOWED_ORIGINS = [
   'https://haunted-estates.onrender.com',
   /^https:\/\/[a-z0-9-]+\.game-files\.crazygames\.com$/,
+  /^https:\/\/[a-z0-9-]+\.itch\.zone$/,
 ];
 const io = new Server(server, { cors: { origin: ALLOWED_ORIGINS } });
 
